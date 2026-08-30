@@ -6,7 +6,7 @@ import { DialogManager } from './dialogManager.js';
 
 export class HUD {
   constructor(handlers) {
-    this.handlers = handlers; // { onModeChange, onUndo, onReset, onHint, onLoop, onOpenLevels, onOpenEditor }
+    this.handlers = handlers;
     this.elapsedSeconds = 0;
     this.timerInterval = null;
     this.bindButtons();
@@ -26,6 +26,11 @@ export class HUD {
     document.getElementById('btn-sound')?.addEventListener('click', () => {
       const isMuted = soundManager.toggleMute();
       this.updateSoundButton(isMuted);
+    });
+
+    document.getElementById('btn-music')?.addEventListener('click', () => {
+      const isMusicPlaying = soundManager.toggleMusic();
+      this.updateMusicButton(isMusicPlaying);
     });
 
     document.getElementById('btn-level-select')?.addEventListener('click', () => {
@@ -64,6 +69,14 @@ export class HUD {
     const btn = document.getElementById('btn-sound');
     if (btn) {
       btn.innerHTML = isMuted ? '🔇' : '🔊';
+    }
+  }
+
+  updateMusicButton(isPlaying) {
+    const btn = document.getElementById('btn-music');
+    if (btn) {
+      btn.innerHTML = isPlaying ? '🎵' : '🔇';
+      btn.classList.toggle('active', isPlaying);
     }
   }
 
@@ -121,11 +134,13 @@ export class HUD {
       el.className = 'dock-item';
       
       const icon = item.type === 'mirror' ? '🪞' : item.type === 'splitter' ? '💠' : item.type === 'filter' ? '🟦' : '⚙️';
-      
+      const label = item.type === 'filter' ? (item.filterColor || 'Filter') : item.type;
+
       el.innerHTML = `
         <div class="item-icon">${icon}</div>
         <div class="item-count">${item.count}</div>
       `;
+      el.title = `${label} (${item.count} available) - Click to select then place on grid`;
 
       el.addEventListener('click', () => {
         onSelectType(item.type, item.filterColor);

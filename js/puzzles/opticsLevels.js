@@ -1,5 +1,6 @@
 /**
  * Quantum Optics Campaign Levels & Procedural Generator
+ * Handcrafted progression from intuitive optical fundamentals to mind-bending quantum puzzles.
  */
 
 export const OPTICS_LEVELS = [
@@ -11,9 +12,8 @@ export const OPTICS_LEVELS = [
     rows: 6,
     targetMoves: 2,
     hints: [
-      'Place a mirror on the laser path to reflect it 90 degrees.',
-      'Tap or right-click the placed mirror to change its reflection angle.',
-      'Target is at (4, 4).'
+      'Place a mirror on the laser trajectory at (4, 1).',
+      'Tap the mirror to rotate its reflection angle until it points down to the cyan receptor at (4, 4).'
     ],
     emitters: [{ x: 1, y: 1, dir: 0, color: 'cyan' }], // Right
     receptors: [{ x: 4, y: 4, color: 'cyan' }],
@@ -28,10 +28,10 @@ export const OPTICS_LEVELS = [
     rows: 7,
     targetMoves: 4,
     hints: [
-      'You need two mirrors to navigate around the center blocker.',
-      'Reflect downwards first, then rightwards towards the receptor.'
+      'You need two mirrors to navigate around the central obstacle wall.',
+      'Reflect downwards first at (4, 1), then reflect rightwards at (4, 5) towards the receptor.'
     ],
-    emitters: [{ x: 1, y: 2, dir: 0, color: 'cyan' }],
+    emitters: [{ x: 1, y: 1, dir: 0, color: 'cyan' }],
     receptors: [{ x: 5, y: 5, color: 'cyan' }],
     inventory: [{ type: 'mirror', count: 3 }],
     fixedItems: [
@@ -48,8 +48,8 @@ export const OPTICS_LEVELS = [
     rows: 7,
     targetMoves: 5,
     hints: [
-      'Use the beam splitter to divide the single laser into two perpendicular paths.',
-      'Direct one path to the top receptor and the other to the bottom receptor.'
+      'Use the beam splitter to divide the single magenta laser into two separate paths.',
+      'One beam goes straight while the reflected beam shoots perpendicular.'
     ],
     emitters: [{ x: 1, y: 3, dir: 0, color: 'magenta' }],
     receptors: [
@@ -70,14 +70,13 @@ export const OPTICS_LEVELS = [
     rows: 8,
     targetMoves: 6,
     hints: [
-      'The white laser can be split and filtered into distinct frequencies.',
-      'Cyan filter passes Blue & Green; Magenta filter passes Red & Blue.',
-      'Align the filtered beams to the matching receptor cores.'
+      'The white laser contains all wavelengths.',
+      'Split the white laser, then pass one through the Cyan filter and the other through Magenta.'
     ],
     emitters: [{ x: 1, y: 3, dir: 0, color: 'white' }],
     receptors: [
       { x: 6, y: 1, color: 'cyan' },
-      { x: 6, y: 6, color: 'magenta' }
+      { x: 6, y: 5, color: 'magenta' }
     ],
     inventory: [
       { type: 'splitter', count: 1 },
@@ -138,42 +137,41 @@ export const OPTICS_LEVELS = [
   },
   {
     id: 7,
-    title: 'The Entanglement Maze',
+    title: 'Laser Crossroads',
+    difficulty: 'Advanced',
+    cols: 8,
+    rows: 8,
+    targetMoves: 8,
+    hints: [
+      'Two distinct laser beams must reach their corresponding colored cores without crossing into wrong paths.',
+      'Direct Cyan along the perimeter and Magenta through the center.'
+    ],
+    emitters: [
+      { x: 1, y: 1, dir: 0, color: 'cyan' },
+      { x: 6, y: 6, dir: 2, color: 'magenta' }
+    ],
+    receptors: [
+      { x: 6, y: 1, color: 'cyan' },
+      { x: 1, y: 6, color: 'magenta' }
+    ],
+    inventory: [
+      { type: 'mirror', count: 5 }
+    ],
+    fixedItems: [
+      { type: 'blocker', x: 3, y: 3 },
+      { type: 'blocker', x: 4, y: 4 }
+    ]
+  },
+  {
+    id: 8,
+    title: 'Spectral Synthesis',
     difficulty: 'Mastermind',
     cols: 9,
     rows: 9,
     targetMoves: 10,
     hints: [
-      'Two laser sources of different colors must reach their respective targets.',
-      'Avoid crossing paths that would occlude the secondary beam.'
-    ],
-    emitters: [
-      { x: 1, y: 1, dir: 0, color: 'cyan' },
-      { x: 7, y: 7, dir: 2, color: 'magenta' }
-    ],
-    receptors: [
-      { x: 7, y: 1, color: 'cyan' },
-      { x: 1, y: 7, color: 'magenta' }
-    ],
-    inventory: [
-      { type: 'mirror', count: 6 }
-    ],
-    fixedItems: [
-      { type: 'blocker', x: 4, y: 2 },
-      { type: 'blocker', x: 4, y: 4 },
-      { type: 'blocker', x: 4, y: 6 }
-    ]
-  },
-  {
-    id: 8,
-    title: 'Spectral Fusion',
-    difficulty: 'Mastermind',
-    cols: 9,
-    rows: 9,
-    targetMoves: 12,
-    hints: [
-      'Wormholes combined with dual splitters require 4 distinct path vectors.',
-      'Use every mirror with optimal orientation.'
+      'Split white light into 3 color channels: Cyan, Yellow, Magenta.',
+      'Route each through its respective filter and power all 3 cores simultaneously.'
     ],
     emitters: [{ x: 0, y: 2, dir: 0, color: 'white' }],
     receptors: [
@@ -186,16 +184,41 @@ export const OPTICS_LEVELS = [
       { type: 'filter', filterColor: 'cyan', count: 1 },
       { type: 'filter', filterColor: 'yellow', count: 1 },
       { type: 'filter', filterColor: 'magenta', count: 1 },
-      { type: 'mirror', count: 5 }
+      { type: 'mirror', count: 6 }
     ],
     fixedItems: [
       { type: 'portal', portalId: 1, x: 5, y: 2 },
       { type: 'portal', portalId: 1, x: 2, y: 5 }
     ]
+  },
+  {
+    id: 9,
+    title: 'The Entanglement Matrix',
+    difficulty: 'Mastermind',
+    cols: 9,
+    rows: 9,
+    targetMoves: 12,
+    hints: [
+      'Combine dual portals and twin splitters to power four corners of the matrix.',
+      'Position mirrors symmetrically.'
+    ],
+    emitters: [{ x: 4, y: 0, dir: 1, color: 'cyan' }], // Down from top center
+    receptors: [
+      { x: 1, y: 1, color: 'cyan' },
+      { x: 7, y: 1, color: 'cyan' },
+      { x: 1, y: 7, color: 'cyan' },
+      { x: 7, y: 7, color: 'cyan' }
+    ],
+    inventory: [
+      { type: 'splitter', count: 3 },
+      { type: 'mirror', count: 6 }
+    ],
+    fixedItems: [
+      { type: 'blocker', x: 4, y: 4 }
+    ]
   }
 ];
 
-// Procedural Level Generator for Infinite Play
 export function generateProceduralOpticsLevel(seed = Date.now(), difficulty = 'Normal') {
   const cols = difficulty === 'Hard' ? 9 : 8;
   const rows = difficulty === 'Hard' ? 9 : 8;
@@ -233,8 +256,8 @@ export function generateProceduralOpticsLevel(seed = Date.now(), difficulty = 'N
     rows,
     targetMoves: mirrorCount + 2,
     hints: [
-      'Analyze the line of sight from the emitter to receptor.',
-      'Position mirrors at 90-degree intersection points.'
+      'Trace the direct optical angles from source to receiver.',
+      'Place mirrors at 90-degree intersection intersections.'
     ],
     emitters: [{ x: emitterX, y: emitterY, dir: 0, color }],
     receptors: [{ x: receptorX, y: receptorY, color }],

@@ -30,7 +30,8 @@ class GameApp {
     this.currentLevelIndex = 0;
     this.activeEngine = null;
     this.selectedDockItem = null;
-    this.draggedGridItem = null;
+    this.hoverCell = { x: -1, y: -1 };
+    this.isVictoryTransitioning = false;
 
     // Daily Gauntlet State
     this.dailyStages = [];
@@ -65,13 +66,23 @@ class GameApp {
     this.loadLevel('optics', 0);
     this.bindGlobalDialogButtons();
     
-    // Start main game animation loop
     requestAnimationFrame(this.gameLoop.bind(this));
 
-    // Show welcome toast
+    // First user gesture will unlock audio
+    const unlockAudio = () => {
+      soundManager.init();
+      if (!soundManager.isMusicMuted && !soundManager.isMuted) {
+        soundManager.startMusic();
+      }
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
+    window.addEventListener('pointerdown', unlockAudio);
+    window.addEventListener('keydown', unlockAudio);
+
     setTimeout(() => {
-      DialogManager.showToast('SYNAPSE Core Initialized. Choose your vector.');
-    }, 500);
+      DialogManager.showToast('SYNAPSE Core Initialized. Ready for deduction.');
+    }, 400);
   }
 
   bindGlobalDialogButtons() {
@@ -123,6 +134,7 @@ class GameApp {
   loadLevel(mode, index) {
     this.currentMode = mode;
     this.currentLevelIndex = index;
+    this.isVictoryTransitioning = false;
 
     let levelData;
     if (mode === 'chrono') {
@@ -225,6 +237,9 @@ class GameApp {
       this.handleUndo();
     } else if (event.type === 'HINT') {
       this.handleHint();
+    } else if (event.type === 'POINTER_MOVE') {
+      const { gx, gy } = this.getGridCoords(event.x, event.y);
+      this.hoverCell = { x: gx, y: gy };
     } else if (event.type === 'POINTER_DOWN') {
       this.handleCanvasPointerDown(event.x, event.y);
     } else if (event.type === 'ROTATE_ACTION' || event.type === 'ROTATE_SELECTED') {
@@ -233,8 +248,8 @@ class GameApp {
   }
 
   getGridCoords(pixelX, pixelY) {
-    const cols = this.activeEngine.cols || 8;
-    const rows = this.activeEngine.rows || 8;
+    const cols = this.activeEngine?.cols || 8;
+    const rows = this.activeEngine?.rows || 8;
     const size = Math.min(this.renderer.width, this.renderer.height);
     const cellSize = (size - 40) / Math.max(cols, rows);
     const offsetX = (this.renderer.width - cols * cellSize) / 2;
@@ -255,6 +270,7 @@ class GameApp {
         const placed = this.activeEngine.placeItem(this.selectedDockItem.type, gx, gy, 45, this.selectedDockItem.color);
         if (placed) {
           soundManager.playRotate();
+          this.renderer.addParticle(px, py, '#00f0ff', 12, 60, 0.4);
           this.selectedDockItem = null;
           this.updateHUDDisplay();
           this.checkWinCondition();
@@ -264,12 +280,12 @@ class GameApp {
         const rotated = this.activeEngine.rotateItem(gx, gy);
         if (rotated) {
           soundManager.playRotate();
+          this.renderer.addParticle(px, py, '#00f0ff', 8, 40, 0.3);
           this.updateHUDDisplay();
           this.checkWinCondition();
         }
       }
     } else if (this.currentMode === 'cipher') {
-      // Check input bit switch clicks
       const inputs = this.activeEngine.inputs || [];
       const numInputs = inputs.length;
       
@@ -278,9 +294,10 @@ class GameApp {
         const sx = this.renderer.width * 0.15;
         const dist = Math.hypot(px - sx, py - sy);
 
-        if (dist <= 25) {
+        if (dist <= 28) {
           this.activeEngine.toggleInput(inputs[i].id);
           soundManager.playSwitch();
+          this.renderer.addParticle(sx, sy, '#00ff66', 15, 70, 0.4);
           this.updateHUDDisplay();
           this.checkWinCondition();
           break;
@@ -304,6 +321,7 @@ class GameApp {
     if (this.currentMode === 'chrono' && this.activeEngine) {
       const success = this.activeEngine.triggerParadoxLoop();
       soundManager.playRewind();
+      this.renderer.triggerShake(5);
       
       this.canvas.classList.add('rewind-active');
       setTimeout(() => this.canvas.classList.remove('rewind-active'), 800);
@@ -349,14 +367,16 @@ class GameApp {
   }
 
   checkWinCondition() {
-    if (this.activeEngine?.isSolved) {
+    if (this.activeEngine?.isSolved && !this.isVictoryTransitioning) {
+      this.isVictoryTransitioning = true;
       this.hud.stopTimer();
       soundManager.playVictory();
+      this.renderer.triggerShake(8);
       
-      // Spawn victory particles
-      this.renderer.addParticle(this.renderer.width / 2, this.renderer.height / 2, '#00f0ff', 60, 180, 1.2);
-      this.renderer.addParticle(this.renderer.width / 2, this.renderer.height / 2, '#ff007f', 40, 150, 1.2);
-      this.renderer.addParticle(this.renderer.width / 2, this.renderer.height / 2, '#ffea00', 40, 150, 1.2);
+      // Spawn supernova confetti particles
+      this.renderer.addParticle(this.renderer.width / 2, this.renderer.height / 2, '#00f0ff', 70, 220, 1.4);
+      this.renderer.addParticle(this.renderer.width / 2, this.renderer.height / 2, '#ff007f', 50, 180, 1.4);
+      this.renderer.addParticle(this.renderer.width / 2, this.renderer.height / 2, '#ffea00', 50, 180, 1.4);
 
       const stars = this.activeEngine.getStarRating();
       const moves = this.activeEngine.moves ?? this.activeEngine.totalMoves ?? 0;
@@ -364,7 +384,6 @@ class GameApp {
 
       storage.saveLevelProgress(this.currentMode, this.currentLevelIndex + 1, { stars, moves, time });
 
-      // If playing Daily Gauntlet
       if (this.currentMode === 'daily' || this.dailyStages.length > 0) {
         this.dailyTotalTime += time;
         this.dailyTotalMoves += moves;
@@ -376,7 +395,6 @@ class GameApp {
           }, 1200);
           return;
         } else {
-          // Finished full Gauntlet!
           const cqScore = DailyGauntlet.calculateCQ(this.dailyTotalTime, this.dailyTotalMoves, this.dailyHintsUsed);
           storage.saveDailyRecord(DailyGauntlet.getTodayDateString(), cqScore, {
             time: this.dailyTotalTime,
@@ -413,7 +431,7 @@ class GameApp {
     this.loadLevel(this.currentMode, this.currentLevelIndex + 1);
   }
 
-  // MAIN RENDER LOOP
+  // --- MAIN RENDER LOOP ---
   gameLoop(timestamp) {
     const dt = (timestamp - this.lastTime) / 1000;
     this.lastTime = timestamp;
@@ -443,7 +461,7 @@ class GameApp {
     const offsetX = (this.renderer.width - cols * cellSize) / 2;
     const offsetY = (this.renderer.height - rows * cellSize) / 2;
 
-    this.renderer.drawGrid(cellSize, cols, rows, offsetX, offsetY);
+    this.renderer.drawGrid(cellSize, cols, rows, offsetX, offsetY, this.hoverCell);
 
     // Draw Laser Rays
     for (const ray of this.activeEngine.rays) {
@@ -500,42 +518,36 @@ class GameApp {
     const offsetX = (this.renderer.width - cols * cellSize) / 2;
     const offsetY = (this.renderer.height - rows * cellSize) / 2;
 
-    this.renderer.drawGrid(cellSize, cols, rows, offsetX, offsetY);
+    this.renderer.drawGrid(cellSize, cols, rows, offsetX, offsetY, this.hoverCell);
 
-    // Draw Walls
     for (const w of this.activeEngine.walls) {
       const wx = offsetX + (w.x + 0.5) * cellSize;
       const wy = offsetY + (w.y + 0.5) * cellSize;
       this.renderer.drawBlocker(wx, wy, cellSize);
     }
 
-    // Draw Pressure Plates
     for (const p of this.activeEngine.plates) {
       const px = offsetX + (p.x + 0.5) * cellSize;
       const py = offsetY + (p.y + 0.5) * cellSize;
       this.renderer.drawPressurePlate(px, py, cellSize, p.isPressed);
     }
 
-    // Draw Doors
     for (const d of this.activeEngine.doors) {
       const dx = offsetX + (d.x + 0.5) * cellSize;
       const dy = offsetY + (d.y + 0.5) * cellSize;
       this.renderer.drawDoor(dx, dy, cellSize, d.isOpen);
     }
 
-    // Draw Exit Portal
     const ex = offsetX + (this.activeEngine.exitPortal.x + 0.5) * cellSize;
     const ey = offsetY + (this.activeEngine.exitPortal.y + 0.5) * cellSize;
     this.renderer.drawExitPortal(ex, ey, cellSize, true);
 
-    // Draw Pushable Batteries
     for (const b of this.activeEngine.batteries) {
       const bx = offsetX + (b.x + 0.5) * cellSize;
       const by = offsetY + (b.y + 0.5) * cellSize;
       this.renderer.drawBattery(bx, by, cellSize);
     }
 
-    // Draw Past Ghost Clones
     const ghosts = this.activeEngine.getGhostPositions();
     for (const g of ghosts) {
       const gx = offsetX + (g.x + 0.5) * cellSize;
@@ -543,7 +555,6 @@ class GameApp {
       this.renderer.drawPlayer(gx, gy, cellSize, true, g.index);
     }
 
-    // Draw Live Player
     const plx = offsetX + (this.activeEngine.player.x + 0.5) * cellSize;
     const ply = offsetY + (this.activeEngine.player.y + 0.5) * cellSize;
     this.renderer.drawPlayer(plx, ply, cellSize, false);
@@ -555,64 +566,63 @@ class GameApp {
     const gates = this.activeEngine.gates || [];
     const outputs = this.activeEngine.outputs || [];
 
-    // Background matrix panel
-    ctx.fillStyle = '#0d101a';
-    ctx.fillRect(20, 20, this.renderer.width - 40, this.renderer.height - 40);
-    ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
-    ctx.strokeRect(20, 20, this.renderer.width - 40, this.renderer.height - 40);
+    ctx.fillStyle = '#0a0d18';
+    ctx.fillRect(15, 15, this.renderer.width - 30, this.renderer.height - 30);
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(15, 15, this.renderer.width - 30, this.renderer.height - 30);
 
-    // Draw Input Switches (Left Column)
+    // Draw Input Switches
     inputs.forEach((input, idx) => {
       const y = (this.renderer.height / (inputs.length + 1)) * (idx + 1);
       const x = this.renderer.width * 0.15;
 
-      ctx.fillStyle = input.value === 1 ? '#00ff66' : '#1e2436';
-      ctx.strokeStyle = input.value === 1 ? '#00ff66' : '#3b4566';
+      ctx.fillStyle = input.value === 1 ? '#00ff66' : '#1a2236';
+      ctx.strokeStyle = input.value === 1 ? '#00ff66' : '#3d4d73';
       ctx.lineWidth = 2.5;
       if (input.value === 1) {
         ctx.shadowColor = '#00ff66';
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 14;
       }
       ctx.beginPath();
-      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.arc(x, y, 22, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = input.value === 1 ? '#000' : '#fff';
+      ctx.fillStyle = input.value === 1 ? '#000000' : '#ffffff';
       ctx.font = 'bold 13px monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(`${input.id}: ${input.value}`, x, y);
     });
 
-    // Draw Gates (Center)
+    // Draw Gates
     gates.forEach(gate => {
       const gx = this.renderer.width * gate.x;
       const gy = this.renderer.height * gate.y;
-      this.renderer.drawLogicGate(gx, gy, 60, gate.type, gate.outputValue === 1);
+      this.renderer.drawLogicGate(gx, gy, 65, gate.type, gate.outputValue === 1);
     });
 
-    // Draw Target Outputs (Right Column)
+    // Draw Target Outputs
     outputs.forEach((out, idx) => {
       const y = (this.renderer.height / (outputs.length + 1)) * (idx + 1);
       const x = this.renderer.width * 0.85;
 
-      ctx.fillStyle = out.isSatisfied ? 'rgba(0, 255, 102, 0.25)' : '#1e2436';
+      ctx.fillStyle = out.isSatisfied ? 'rgba(0, 255, 102, 0.3)' : '#1e2436';
       ctx.strokeStyle = out.isSatisfied ? '#00ff66' : '#ff0055';
       ctx.lineWidth = 2.5;
-      ctx.fillRect(x - 30, y - 20, 60, 40);
-      ctx.strokeRect(x - 30, y - 20, 60, 40);
+      ctx.fillRect(x - 35, y - 22, 70, 44);
+      ctx.strokeRect(x - 35, y - 22, 70, 44);
 
-      ctx.fillStyle = out.isSatisfied ? '#00ff66' : '#fff';
+      ctx.fillStyle = out.isSatisfied ? '#00ff66' : '#ffffff';
       ctx.font = 'bold 11px monospace';
       ctx.textAlign = 'center';
       ctx.fillText(`${out.id}: Target ${out.target}`, x, y - 5);
-      ctx.fillText(`(Cur: ${out.currentValue ?? 0})`, x, y + 10);
+      ctx.fillText(`(Cur: ${out.currentValue ?? 0})`, x, y + 12);
     });
   }
 }
 
-// Instantiate and attach when DOM is loaded
 window.addEventListener('DOMContentLoaded', () => {
   window.gameApp = new GameApp();
 });

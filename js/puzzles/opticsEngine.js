@@ -14,7 +14,7 @@ export class OpticsEngine {
     this.targetMoves = levelData.targetMoves || 10;
     this.hints = levelData.hints || [
       'Position mirrors to reflect laser beams into matching color receptors.',
-      'Right-click or tap a mirror to rotate its reflection angle.',
+      'Tap or right-click a mirror to rotate its reflection angle.',
       'Check beam colors carefully. Some receptors require filtered light.'
     ];
 
@@ -32,7 +32,7 @@ export class OpticsEngine {
       }
     });
 
-    // Place pre-placed placedItems if any
+    // Place pre-placed items if any
     if (levelData.placedItems) {
       levelData.placedItems.forEach(item => {
         if (item.x >= 0 && item.x < this.cols && item.y >= 0 && item.y < this.rows) {
@@ -64,7 +64,7 @@ export class OpticsEngine {
   getReflection(angle, inDir) {
     const normAngle = ((angle % 360) + 360) % 360;
     
-    // Angle 45° (or 225°): Diagonal from bottom-left to top-right
+    // Angle 45° (or 225°): Diagonal from bottom-left to top-right (/)
     if (normAngle === 45 || normAngle === 225) {
       if (inDir === 0) return 3; // Right -> Up
       if (inDir === 1) return 2; // Down -> Left
@@ -72,7 +72,7 @@ export class OpticsEngine {
       if (inDir === 3) return 0; // Up -> Right
     }
 
-    // Angle 135° (or 315°): Diagonal from top-left to bottom-right
+    // Angle 135° (or 315°): Diagonal from top-left to bottom-right (\)
     if (normAngle === 135 || normAngle === 315) {
       if (inDir === 0) return 1; // Right -> Down
       if (inDir === 1) return 0; // Down -> Right
@@ -87,7 +87,6 @@ export class OpticsEngine {
   filterColor(beamColor, filterColor) {
     if (beamColor === filterColor || beamColor === 'white') return filterColor;
     
-    // Subtractive / additive mixing rules
     const colorChannels = {
       red: { r: 1, g: 0, b: 0 },
       green: { r: 0, g: 1, b: 0 },
@@ -112,7 +111,7 @@ export class OpticsEngine {
     if (r) return 'red';
     if (g) return 'green';
     if (bl) return 'blue';
-    return null; // Absorbed/blocked
+    return null;
   }
 
   // Recalculate all laser beam paths across the matrix
@@ -201,7 +200,6 @@ export class OpticsEngine {
             break; // Absorbed on back
           }
         } else if (cell.type === 'splitter') {
-          // Passes 1 beam forward and reflects 1 beam at 90 deg
           const reflectedDir = this.getReflection(cell.angle || 45, dir);
           if (reflectedDir !== null) {
             queue.push({ x: cx, y: cy, dir: reflectedDir, color });
@@ -212,10 +210,9 @@ export class OpticsEngine {
           if (filtered) {
             color = filtered;
           } else {
-            break; // Light absorbed completely
+            break;
           }
         } else if (cell.type === 'portal') {
-          // Find paired portal
           let paired = null;
           for (let r = 0; r < this.rows; r++) {
             for (let c = 0; c < this.cols; c++) {
@@ -231,12 +228,11 @@ export class OpticsEngine {
           }
           break;
         } else if (cell.type === 'blocker') {
-          break; // Metallic wall blocks laser
+          break;
         }
       }
     }
 
-    // Check level win condition: All receptors must be powered
     this.isSolved = this.receptors.length > 0 && this.receptors.every(r => r.powered);
     return this.isSolved;
   }
@@ -245,7 +241,6 @@ export class OpticsEngine {
   placeItem(type, x, y, angle = 45, filterColor = 'cyan', portalId = 1) {
     if (x < 0 || x >= this.cols || y < 0 || y >= this.rows) return false;
     
-    // Check if cell is occupied by fixed emitter or receptor
     if (this.emitters.some(e => e.x === x && e.y === y)) return false;
     if (this.receptors.some(r => r.x === x && r.y === y)) return false;
 
@@ -254,13 +249,11 @@ export class OpticsEngine {
 
     this.saveState();
 
-    // If taking from inventory, decrement inventory count
     const invItem = this.inventory.find(i => i.type === type);
     if (invItem && invItem.count > 0 && !existing) {
       invItem.count--;
     }
 
-    // Place on grid
     this.grid[y][x] = {
       type,
       angle,
@@ -299,7 +292,6 @@ export class OpticsEngine {
 
     this.saveState();
 
-    // Return to inventory
     const invItem = this.inventory.find(i => i.type === item.type);
     if (invItem) {
       invItem.count++;
