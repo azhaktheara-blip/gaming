@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SYNAPSE: The Neuro-Logic Matrix</title>
+  <meta name="description" content="A mind-bending quantum logic, time-loop paradox, and boolean puzzle game.">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app-container">
+    
+    <!-- Top HUD Navigation -->
+    <header id="hud-header">
+      <div class="brand-section">
+        <div class="brand-logo">Ψ</div>
+        <div class="brand-title">SYNAPSE</div>
+      </div>
+
+      <nav class="mode-selector-group" aria-label="Game Modes">
+        <button class="mode-tab-btn active" data-mode="optics" title="Quantum Beam Architect">
+          <span>⚡</span>
+          <span class="tab-text">Optics</span>
+        </button>
+        <button class="mode-tab-btn" data-mode="chrono" title="Chrono-Paradox Time Clones">
+          <span>⏳</span>
+          <span class="tab-text">Chrono</span>
+        </button>
+        <button class="mode-tab-btn" data-mode="cipher" title="Synaptic Cipher Circuit">
+          <span>🧠</span>
+          <span class="tab-text">Cipher</span>
+        </button>
+        <button class="mode-tab-btn" data-mode="daily" title="Daily Cognitive Gauntlet">
+          <span>🏆</span>
+          <span class="tab-text">Daily</span>
+        </button>
+      </nav>
+
+      <div class="hud-actions">
+        <button id="btn-sound" class="btn-icon" title="Toggle Audio (M)">🔊</button>
+        <button id="btn-level-select" class="btn-icon" title="Level Map">🗺️</button>
+        <button id="btn-editor" class="btn-icon" title="Level Studio">🛠️</button>
+      </div>
+    </header>
+
+    <!-- Main Viewport / Game Canvas -->
+    <main id="game-viewport">
+      
+      <!-- In-Game Floating HUD -->
+      <div id="game-floating-hud">
+        <div class="hud-pill">
+          <span id="hud-level-badge" class="level-badge">LVL 1</span>
+          <span id="hud-level-title">Photon Alignment</span>
+        </div>
+
+        <div class="hud-pill">
+          <div class="stat-item">
+            <span>⏱️</span>
+            <span id="hud-timer" class="value">00:00</span>
+          </div>
+          <div class="stat-item" style="margin-left: 8px;">
+            <span>👣</span>
+            <span id="hud-moves" class="value">0 / 2</span>
+          </div>
+        </div>
+
+        <div class="controls-pill">
+          <button id="btn-rewind-loop" class="btn-icon" title="Paradox Rewind (Space)" style="display: none; color: var(--accent-magenta);">⏳</button>
+          <button id="btn-undo" class="btn-icon" title="Undo Move (Z)">↶</button>
+          <button id="btn-reset" class="btn-icon" title="Restart Level (R)">🔄</button>
+          <button id="btn-hint" class="btn-icon" title="Intel & Hints (H)">💡</button>
+        </div>
+      </div>
+
+      <div id="canvas-container">
+        <canvas id="game-canvas"></canvas>
+      </div>
+
+      <!-- Inventory Dock for Optics & Editor Placement -->
+      <div id="inventory-dock" role="toolbar" aria-label="Component Dock"></div>
+    </main>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <!-- Victory Modal Dialog -->
+    <dialog id="victory-dialog" closedby="any" aria-labelledby="victory-title">
+      <div class="victory-modal">
+        <div class="brand-logo" style="margin: 0 auto 12px auto;">Ψ</div>
+        <h2 id="victory-title" class="dialog-title" style="justify-content: center;">NEURAL MATRIX SOLVED</h2>
+        
+        <div id="victory-stars-display" class="victory-stars">★★★</div>
+
+        <div class="victory-stats">
+          <div class="victory-stat-box">
+            <div class="title">Moves</div>
+            <div id="victory-moves" class="num">0</div>
+          </div>
+          <div class="victory-stat-box">
+            <div class="title">Time</div>
+            <div id="victory-time" class="num">0s</div>
+          </div>
+          <div class="victory-stat-box">
+            <div class="title">Total Stars</div>
+            <div id="victory-total-stars" class="num">0</div>
+          </div>
+        </div>
+
+        <div class="dialog-footer" style="justify-content: center;">
+          <button id="btn-replay-level" class="btn-secondary">Replay</button>
+          <button id="btn-next-level" class="btn-primary">Next Challenge ➔</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Level Select Modal Dialog -->
+    <dialog id="level-select-dialog" closedby="any" aria-labelledby="level-select-title">
+      <div class="dialog-header">
+        <h2 id="level-select-title" class="dialog-title">Sector Matrix Map</h2>
+        <form method="dialog"><button class="btn-icon" type="submit">✕</button></form>
+      </div>
+      <div class="dialog-body">
+        <div id="level-grid-container" class="level-grid"></div>
+      </div>
+    </dialog>
+
+    <!-- Hint & Intel Modal Dialog -->
+    <dialog id="hint-dialog" closedby="any" aria-labelledby="hint-title">
+      <div class="dialog-header">
+        <h2 id="hint-title" class="dialog-title">Cognitive Tactical Intel</h2>
+        <form method="dialog"><button class="btn-icon" type="submit">✕</button></form>
+      </div>
+      <div id="hint-dialog-body" class="dialog-body">
+        <!-- Injected hints -->
+      </div>
+      <div class="dialog-footer">
+        <form method="dialog"><button class="btn-primary" type="submit">Got It</button></form>
+      </div>
+    </dialog>
+
+    <!-- Level Studio Modal Dialog -->
+    <dialog id="editor-dialog" closedby="any" aria-labelledby="editor-title">
+      <div class="dialog-header">
+        <h2 id="editor-title" class="dialog-title">Level Studio: Quantum Architect</h2>
+        <form method="dialog"><button class="btn-icon" type="submit">✕</button></form>
+      </div>
+      <div class="dialog-body">
+        <p style="margin-bottom: 12px; font-size: 0.9rem;">
+          Design custom puzzles, test reflection dynamics, and share encoded matrix strings with fellow minds.
+        </p>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+          <button id="btn-test-editor-level" class="btn-primary">Test Live Matrix</button>
+          <button id="btn-export-code" class="btn-secondary">Export Level Code</button>
+          <button id="btn-import-code" class="btn-secondary">Import Code</button>
+        </div>
+      </div>
+    </dialog>
+
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

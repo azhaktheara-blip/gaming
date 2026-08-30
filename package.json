@@ -1,0 +1,21 @@
+{
+  "name": "synapse-matrix-game",
+  "version": "1.0.0",
+  "description": "A mind-bending quantum logic, time-loop paradox, and boolean puzzle game.",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/engine.test.mjs",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "game",
+    "puzzle",
+    "quantum-optics",
+    "time-loop",
+    "boolean-logic",
+    "canvas",
+    "brain-game"
+  ],
+  "author": "Krai Theara",
+  "license": "MIT"
+}
