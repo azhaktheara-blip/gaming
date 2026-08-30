@@ -3,159 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SYNAPSE: The Neuro-Logic Matrix</title>
-  <meta name="description" content="A mind-bending quantum logic, time-loop paradox, and boolean puzzle game.">
+  <title>Realm Clash - 2D Tactical Kingdom & AI War</title>
+  <meta name="description" content="A 2D strategic base builder and real-time tactical AI combat game inspired by Clash of Clans.">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/animations.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="app-container">
-    
-    <!-- Top HUD Navigation -->
-    <header id="hud-header">
-      <div class="brand-section">
-        <div class="brand-logo">Ψ</div>
-        <div class="brand-title">SYNAPSE</div>
-      </div>
 
-      <nav class="mode-selector-group" aria-label="Game Modes">
-        <button class="mode-tab-btn active" data-mode="optics" title="Quantum Beam Architect">
-          <span>⚡</span>
-          <span class="tab-text">Optics</span>
-        </button>
-        <button class="mode-tab-btn" data-mode="chrono" title="Chrono-Paradox Time Clones">
-          <span>⏳</span>
-          <span class="tab-text">Chrono</span>
-        </button>
-        <button class="mode-tab-btn" data-mode="cipher" title="Synaptic Cipher Circuit">
-          <span>🧠</span>
-          <span class="tab-text">Cipher</span>
-        </button>
-        <button class="mode-tab-btn" data-mode="daily" title="Daily Cognitive Gauntlet">
-          <span>🏆</span>
-          <span class="tab-text">Daily</span>
-        </button>
-      </nav>
-
-      <div class="hud-actions">
-        <button id="btn-music" class="btn-icon active" title="Toggle Synthwave Music">🎵</button>
-        <button id="btn-sound" class="btn-icon" title="Toggle Sound Effects (M)">🔊</button>
-        <button id="btn-level-select" class="btn-icon" title="Sector Map (Esc)">🗺️</button>
-        <button id="btn-editor" class="btn-icon" title="Level Studio">🛠️</button>
-      </div>
-    </header>
-
-    <!-- Main Viewport / Game Canvas -->
-    <main id="game-viewport">
+    <!-- VILLAGE UI LAYER -->
+    <div id="village-ui-layer" class="ui-layer">
       
-      <!-- In-Game Floating HUD -->
-      <div id="game-floating-hud">
-        <div class="hud-pill">
-          <span id="hud-level-badge" class="level-badge">LVL 1</span>
-          <span id="hud-level-title">Photon Alignment</span>
+      <!-- Top Resource Bar -->
+      <header id="village-top-bar">
+        <div class="brand-title">⚔️ REALM CLASH</div>
+
+        <div class="resource-pill-group">
+          <div class="res-pill gold-pill">
+            <span class="res-icon">💰</span>
+            <span id="hud-gold" class="res-val">2,500 / 10,000</span>
+          </div>
+          <div class="res-pill elixir-pill">
+            <span class="res-icon">🧪</span>
+            <span id="hud-elixir" class="res-val">2,500 / 10,000</span>
+          </div>
+          <div class="res-pill gems-pill">
+            <span class="res-icon">💎</span>
+            <span id="hud-gems" class="res-val">50</span>
+          </div>
+          <div class="res-pill army-pill">
+            <span class="res-icon">⛺</span>
+            <span id="hud-army-count" class="res-val">15 / 50</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Bottom Action Toolbar -->
+      <footer id="village-bottom-bar">
+        <button id="btn-open-shop" class="btn-clash btn-shop">
+          <span class="btn-icon">🛠️</span>
+          <span>Shop</span>
+        </button>
+        <button id="btn-open-train" class="btn-clash btn-train-army">
+          <span class="btn-icon">⚔️</span>
+          <span>Train Army</span>
+        </button>
+        <button id="btn-start-attack" class="btn-clash btn-attack">
+          <span class="btn-icon">💥</span>
+          <span>ATTACK!</span>
+        </button>
+      </footer>
+
+      <!-- Building Inspector Drawer -->
+      <div id="building-inspector" class="inspector-drawer" style="display: none;">
+        <div class="inspector-header">
+          <h3 id="inspector-title">Town Hall (Lvl 1)</h3>
+          <button id="btn-close-inspector" class="btn-icon-sm">✕</button>
+        </div>
+        <p id="inspector-desc">The central hub of your village.</p>
+        <div id="inspector-hp" class="inspector-stat">HP: 1500 / 1500</div>
+      </div>
+    </div>
+
+    <!-- BATTLE UI LAYER -->
+    <div id="battle-ui-layer" class="ui-layer" style="display: none;">
+      
+      <!-- Top Battle HUD -->
+      <header id="battle-top-bar">
+        <div class="battle-destruction-panel">
+          <div class="destruction-label">DESTRUCTION</div>
+          <div id="battle-destruction-val" class="destruction-val">0%</div>
+          <div class="progress-track">
+            <div id="battle-destruction-bar" class="progress-fill" style="width: 0%;"></div>
+          </div>
+          <div id="battle-stars" class="stars-display">☆☆☆</div>
         </div>
 
-        <div class="hud-pill">
-          <div class="stat-item">
+        <div class="battle-stats-group">
+          <div class="battle-timer-box">
             <span>⏱️</span>
-            <span id="hud-timer" class="value">00:00</span>
+            <span id="battle-timer">03:00</span>
           </div>
-          <div class="stat-item" style="margin-left: 8px;">
-            <span>👣</span>
-            <span id="hud-moves" class="value">0 / 2</span>
+          <div class="loot-stolen-box">
+            <span>💰 <strong id="battle-stolen-gold">+0</strong></span>
+            <span style="margin-left: 8px;">🧪 <strong id="battle-stolen-elixir">+0</strong></span>
           </div>
         </div>
 
-        <div class="controls-pill">
-          <button id="btn-rewind-loop" class="btn-icon" title="Paradox Rewind (Space)" style="display: none; color: var(--accent-magenta);">⏳</button>
-          <button id="btn-undo" class="btn-icon" title="Undo Move (Z)">↶</button>
-          <button id="btn-reset" class="btn-icon" title="Restart Level (R)">🔄</button>
-          <button id="btn-hint" class="btn-icon" title="Tactical Intel & Hints (H)">💡</button>
-        </div>
-      </div>
+        <button id="btn-surrender" class="btn-danger">Surrender</button>
+      </header>
 
-      <div id="canvas-container">
-        <canvas id="game-canvas"></canvas>
-      </div>
+      <!-- Bottom Troop Deployment Deck -->
+      <footer id="battle-bottom-bar">
+        <div id="battle-troop-deck" class="deck-container"></div>
+      </footer>
+    </div>
 
-      <!-- Inventory Dock for Optics & Editor Placement -->
-      <div id="inventory-dock" role="toolbar" aria-label="Component Dock"></div>
+    <!-- Viewport Canvas -->
+    <main id="game-viewport">
+      <canvas id="game-canvas"></canvas>
     </main>
 
     <!-- Toast Notifications Container -->
-    <div id="toast-container" aria-live="polite"></div>
+    <div id="toast-container"></div>
 
-    <!-- Victory Modal Dialog -->
-    <dialog id="victory-dialog" closedby="any" aria-labelledby="victory-title">
-      <div class="victory-modal">
-        <div class="brand-logo" style="margin: 0 auto 12px auto;">Ψ</div>
-        <h2 id="victory-title" class="dialog-title" style="justify-content: center;">NEURAL MATRIX RESOLVED</h2>
-        
-        <div id="victory-stars-display" class="victory-stars">★★★</div>
-
-        <div class="victory-stats">
-          <div class="victory-stat-box">
-            <div class="title">Moves</div>
-            <div id="victory-moves" class="num">0</div>
-          </div>
-          <div class="victory-stat-box">
-            <div class="title">Time</div>
-            <div id="victory-time" class="num">0s</div>
-          </div>
-          <div class="victory-stat-box">
-            <div class="title">Total Stars</div>
-            <div id="victory-total-stars" class="num">0</div>
-          </div>
-        </div>
-
-        <div class="dialog-footer" style="justify-content: center;">
-          <button id="btn-replay-level" class="btn-secondary">Replay</button>
-          <button id="btn-next-level" class="btn-primary">Next Challenge ➔</button>
-        </div>
-      </div>
-    </dialog>
-
-    <!-- Level Select Modal Dialog -->
-    <dialog id="level-select-dialog" closedby="any" aria-labelledby="level-select-title">
+    <!-- Building Shop Modal -->
+    <dialog id="shop-dialog" closedby="any">
       <div class="dialog-header">
-        <h2 id="level-select-title" class="dialog-title">Sector Matrix Map</h2>
-        <form method="dialog"><button class="btn-icon" type="submit">✕</button></form>
+        <h2 class="dialog-title">Village Building Catalog</h2>
+        <form method="dialog"><button class="btn-icon-sm" type="submit">✕</button></form>
       </div>
       <div class="dialog-body">
-        <div id="level-grid-container" class="level-grid"></div>
+        <div id="shop-items-grid" class="shop-grid"></div>
       </div>
     </dialog>
 
-    <!-- Hint & Intel Modal Dialog -->
-    <dialog id="hint-dialog" closedby="any" aria-labelledby="hint-title">
+    <!-- Troop Training Modal -->
+    <dialog id="train-dialog" closedby="any">
       <div class="dialog-header">
-        <h2 id="hint-title" class="dialog-title">Cognitive Tactical Intel</h2>
-        <form method="dialog"><button class="btn-icon" type="submit">✕</button></form>
-      </div>
-      <div id="hint-dialog-body" class="dialog-body"></div>
-      <div class="dialog-footer">
-        <form method="dialog"><button class="btn-primary" type="submit">Got It</button></form>
-      </div>
-    </dialog>
-
-    <!-- Level Studio Modal Dialog -->
-    <dialog id="editor-dialog" closedby="any" aria-labelledby="editor-title">
-      <div class="dialog-header">
-        <h2 id="editor-title" class="dialog-title">Level Studio: Quantum Architect</h2>
-        <form method="dialog"><button class="btn-icon" type="submit">✕</button></form>
+        <h2 class="dialog-title">Barracks Army Training</h2>
+        <form method="dialog"><button class="btn-icon-sm" type="submit">✕</button></form>
       </div>
       <div class="dialog-body">
-        <p style="margin-bottom: 12px; font-size: 0.9rem;">
-          Design custom puzzles, test reflection dynamics, and share encoded matrix strings with fellow minds.
-        </p>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
-          <button id="btn-test-editor-level" class="btn-primary">Test Live Matrix</button>
-          <button id="btn-export-code" class="btn-secondary">Export Level Code</button>
-          <button id="btn-import-code" class="btn-secondary">Import Code</button>
+        <div id="train-troops-grid" class="train-grid"></div>
+      </div>
+    </dialog>
+
+    <!-- Battle Report Modal -->
+    <dialog id="battle-report-dialog" closedby="any">
+      <div class="dialog-header" style="justify-content: center;">
+        <h2 id="report-title" class="dialog-title">VICTORY RAID!</h2>
+      </div>
+      <div class="dialog-body" style="text-align: center;">
+        <div id="report-stars" class="victory-stars">★★★</div>
+        <h3 id="report-destruction" style="margin: 12px 0;">100% Destruction</h3>
+        <div class="victory-loot-box">
+          <div id="report-gold" class="loot-item">💰 +5,000</div>
+          <div id="report-elixir" class="loot-item">🧪 +5,000</div>
         </div>
+      </div>
+      <div class="dialog-footer" style="justify-content: center;">
+        <button id="btn-return-village" class="btn-clash btn-attack">Return to Village</button>
       </div>
     </dialog>
 

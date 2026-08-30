@@ -1,0 +1,200 @@
+/**
+ * Building Definitions, Stats, Production Rates, and Upgrades
+ */
+
+export const BUILDING_TYPES = {
+  TOWN_HALL: 'town_hall',
+  GOLD_MINE: 'gold_mine',
+  ELIXIR_COLLECTOR: 'elixir_collector',
+  GOLD_STORAGE: 'gold_storage',
+  ELIXIR_STORAGE: 'elixir_storage',
+  BARRACKS: 'barracks',
+  ARMY_CAMP: 'army_camp',
+  CANNON: 'cannon',
+  ARCHER_TOWER: 'archer_tower',
+  MORTAR: 'mortar',
+  WIZARD_TOWER: 'wizard_tower',
+  WALL: 'wall'
+};
+
+export const BUILDINGS_DATA = {
+  [BUILDING_TYPES.TOWN_HALL]: {
+    name: 'Town Hall',
+    category: 'core',
+    width: 3,
+    height: 3,
+    baseCost: { gold: 0, elixir: 0 },
+    hp: 1500,
+    isDefense: false,
+    isResource: false,
+    description: 'The heart of your village. Upgrading unlocks new buildings and defenses.',
+    color: '#3b82f6',
+    roofColor: '#1d4ed8'
+  },
+  [BUILDING_TYPES.GOLD_MINE]: {
+    name: 'Gold Mine',
+    category: 'resources',
+    width: 2,
+    height: 2,
+    baseCost: { elixir: 150 },
+    hp: 400,
+    productionRate: 15, // Gold per sec
+    capacity: 1000,
+    isDefense: false,
+    isResource: true,
+    description: 'Extracts precious gold from deep underground.',
+    color: '#eab308',
+    roofColor: '#ca8a04'
+  },
+  [BUILDING_TYPES.ELIXIR_COLLECTOR]: {
+    name: 'Elixir Collector',
+    category: 'resources',
+    width: 2,
+    height: 2,
+    baseCost: { gold: 150 },
+    hp: 400,
+    productionRate: 15, // Elixir per sec
+    capacity: 1000,
+    isDefense: false,
+    isResource: true,
+    description: 'Pumps magical elixir from underground leylines.',
+    color: '#ec4899',
+    roofColor: '#db2777'
+  },
+  [BUILDING_TYPES.GOLD_STORAGE]: {
+    name: 'Gold Storage',
+    category: 'resources',
+    width: 2,
+    height: 2,
+    baseCost: { elixir: 300 },
+    hp: 800,
+    capacity: 10000,
+    isDefense: false,
+    isResource: true,
+    description: 'Safely stores your village gold reserves.',
+    color: '#f59e0b',
+    roofColor: '#d97706'
+  },
+  [BUILDING_TYPES.ELIXIR_STORAGE]: {
+    name: 'Elixir Storage',
+    category: 'resources',
+    width: 2,
+    height: 2,
+    baseCost: { gold: 300 },
+    hp: 800,
+    capacity: 10000,
+    isDefense: false,
+    isResource: true,
+    description: 'Secure vaulted vat for storing pure elixir.',
+    color: '#d946ef',
+    roofColor: '#c026d3'
+  },
+  [BUILDING_TYPES.BARRACKS]: {
+    name: 'Barracks',
+    category: 'army',
+    width: 2,
+    height: 2,
+    baseCost: { elixir: 200 },
+    hp: 350,
+    isDefense: false,
+    isResource: false,
+    description: 'Trains combat troops for battle raids.',
+    color: '#ef4444',
+    roofColor: '#dc2626'
+  },
+  [BUILDING_TYPES.ARMY_CAMP]: {
+    name: 'Army Camp',
+    category: 'army',
+    width: 3,
+    height: 3,
+    baseCost: { elixir: 250 },
+    hp: 300,
+    housingCapacity: 40,
+    isDefense: false,
+    isResource: false,
+    description: 'Houses your trained armies ready for war.',
+    color: '#10b981',
+    roofColor: '#059669'
+  },
+  [BUILDING_TYPES.CANNON]: {
+    name: 'Cannon',
+    category: 'defenses',
+    width: 2,
+    height: 2,
+    baseCost: { gold: 250 },
+    hp: 550,
+    damage: 28,
+    range: 6.5,
+    attackSpeed: 0.8, // Seconds per shot
+    isDefense: true,
+    isResource: false,
+    description: 'Rapid-firing defensive cannon targeting ground troops.',
+    color: '#475569',
+    barrelColor: '#0f172a'
+  },
+  [BUILDING_TYPES.ARCHER_TOWER]: {
+    name: 'Archer Tower',
+    category: 'defenses',
+    width: 2,
+    height: 2,
+    baseCost: { gold: 400 },
+    hp: 480,
+    damage: 18,
+    range: 8.5,
+    attackSpeed: 0.5,
+    isDefense: true,
+    isResource: false,
+    description: 'Elevated marksmen providing long-range perimeter defense.',
+    color: '#78350f',
+    roofColor: '#92400e'
+  },
+  [BUILDING_TYPES.MORTAR]: {
+    name: 'Mortar',
+    category: 'defenses',
+    width: 2,
+    height: 2,
+    baseCost: { gold: 800 },
+    hp: 450,
+    damage: 65,
+    splashRadius: 1.8,
+    range: 11,
+    minRange: 2.5,
+    attackSpeed: 3.5, // Heavy artillery cycle
+    isDefense: true,
+    isResource: false,
+    description: 'Long-range explosive artillery dealing massive area splash damage.',
+    color: '#334155',
+    barrelColor: '#020617'
+  },
+  [BUILDING_TYPES.WIZARD_TOWER]: {
+    name: 'Wizard Tower',
+    category: 'defenses',
+    width: 2,
+    height: 2,
+    baseCost: { gold: 1200 },
+    hp: 620,
+    damage: 45,
+    splashRadius: 1.5,
+    range: 7.0,
+    attackSpeed: 1.2,
+    isDefense: true,
+    isResource: false,
+    description: 'Arcane sorcerers casting explosive firestorms at approaching swarms.',
+    color: '#581c87',
+    roofColor: '#7e22ce'
+  },
+  [BUILDING_TYPES.WALL]: {
+    name: 'Wall',
+    category: 'defenses',
+    width: 1,
+    height: 1,
+    baseCost: { gold: 50 },
+    hp: 750,
+    isDefense: false,
+    isResource: false,
+    isWall: true,
+    description: 'Heavy fortifications that block and funnel enemy troops.',
+    color: '#94a3b8',
+    borderColor: '#475569'
+  }
+};

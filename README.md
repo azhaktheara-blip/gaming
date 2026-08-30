@@ -1,93 +1,89 @@
-# 🧠 SYNAPSE: The Neuro-Logic Matrix
+# ⚔️ REALM CLASH: 2D Tactical Kingdom & AI War
 
-> A mind-bending quantum logic, time-loop paradox, and boolean puzzle game.
+> A 2D strategic base builder and real-time tactical AI combat game inspired by *Clash of Clans*, built with modern web standards, A* pathfinding, specialized troop AI behaviors, and procedural Web Audio.
 
-[![Deploy to GitHub Pages](https://github.com/actions/workflows/deploy.yml/badge.svg)](https://github.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen.svg)](index.html)
+[![Dependencies: Zero](https://img.shields.io/badge/Dependencies-Zero-brightgreen.svg)](index.html)
 
 ---
 
-## 🌌 Overview
+## 🏰 Game Overview
 
-**SYNAPSE** is a multi-modal cognitive puzzle game built to challenge spatial reasoning, temporal planning, and deductive logic. It features three distinct puzzle mechanics, an endless daily cognitive challenge with Cognitive Quotient (CQ) rating, and a live level studio.
+**Realm Clash** combines city building, passive resource economies, army training, and real-time AI raids:
+1. **Home Village**: Construct and arrange Town Halls, Gold Mines, Elixir Collectors, Storages, Barracks, Army Camps, Cannons, Mortars, Archer Towers, and Palisade Walls.
+2. **AI Combat & Raids**: Deploy specialized troops outside the enemy red defense zone to destroy AI-generated goblin fortresses and campaign strongholds.
 
 ```
-          ┌──────────────────────────────────────────┐
-          │   Ψ  S Y N A P S E  M A T R I X          │
-          │                                          │
-   ⚡ ───▶│───[ 45° ]───▶ [ Splitter ] ───▶ [Core A] │
-          │                 │                        │
-          │                 ▼                        │
-          │              [Filter] ───▶ [Core B]      │
-          └──────────────────────────────────────────┘
+                     ┌─────────────────────────────────────────┐
+                     │          V I L L A G E   H U B          │
+                     │  [Gold Mines]   [Elixir Vats]   [Camps] │
+                     └────────────────────┬────────────────────┘
+                                          │  Train Army & Attack
+                                          ▼
+                     ┌─────────────────────────────────────────┐
+                     │         A I   B A T T L E G R O U N D   │
+                     │                                         │
+ 🏹 Archer (Range) ─▶│ ──▶ [WALL] ──▶ [Cannon] ◀── 🛡️ Giant    │
+ 💰 Goblin (Loot)   ─▶│ ──▶ [Gold Storage]      ◀── ⚔️ Barbarian│
+ 💣 Wall Breaker    ─▶│ ──▶ [Breach Point]      ◀── 🔮 Wizard   │
+                     └─────────────────────────────────────────┘
 ```
 
 ---
 
-## 🎮 Game Modes
+## 🤖 Specialized Troop AI Behaviors
 
-### 1. ⚡ Quantum Beam Architect (Optics Mode)
-- **Mechanics**: Route laser beams through mirrors, beam splitters, RGB wavelength filters, quantum teleportation portals, and boolean logic gates to power all quantum reactor nodes.
-- **Interactions**: Drag & drop optical elements from the dock, tap/click to rotate reflection angles (45°, 135°, 225°, 315°), and isolate target frequencies.
-
-### 2. ⏳ Chrono-Paradox (Time-Loop Clones Mode)
-- **Mechanics**: A cooperative single-player temporal puzzle. Record your movements in Timeline $T_1$, trigger **Paradox Rewind** (`Spacebar`), and watch your past **Ghost Clone** repeat your previous steps to hold pressure switches and open security gates while you navigate new corridors in parallel.
-
-### 3. 🧠 Synaptic Cipher (Boolean Circuit Mode)
-- **Mechanics**: Deduce binary signals through networks of `AND`, `OR`, `XOR`, `NAND`, `NOR`, and `NOT` logic gates with real-time waveform visualization. Satisfy multiple target constraints with optimal test vectors.
-
-### 4. 🏆 Daily Cognitive Gauntlet
-- A deterministic daily 3-stage challenge combining all puzzle disciplines.
-- Calculates your **Cognitive Quotient (CQ)** score (100–160) and tracks consecutive daily streaks.
-
-### 5. 🛠️ Level Studio & Share Codes
-- Build custom puzzle layouts, test them live in the sandbox engine, and export/import shareable Base64 level strings.
+| Troop | Role | Target Priority | Combat Characteristics |
+| :--- | :--- | :--- | :--- |
+| **⚔️ Barbarian** | Swarm Melee | Any (Closest) | Balanced melee warrior; charges the nearest accessible structure. |
+| **🏹 Archer** | Ranged Marksman | Any | Shoots arrows over walls from safe distances (Range 3.8 tiles). |
+| **🛡️ Giant** | Heavy Tank | **Defenses Only** | Huge HP pool (750 HP); bypasses all other buildings to prioritize Cannons, Mortars, and Towers. |
+| **💰 Goblin** | Resource Raider | **Resources Only** | Fast movement (4.0 tiles/sec); deals **$2\times$ damage** directly to Gold & Elixir Storages. |
+| **💣 Wall Breaker** | Demolition Specialist | **Walls Only** | Seeks the nearest enclosed wall segment and detonates self for **$12\times$ wall damage**. |
+| **🔮 Wizard** | Arcane Sorcerer | Any | High-damage ranged magic firestorms with area-of-effect splash damage. |
 
 ---
 
-## ⌨️ Controls & Shortcuts
+## 🛡️ Defensive Tower AI & Artillery Ballistics
 
-| Action | Control (Desktop) | Touch / Mobile |
-| :--- | :--- | :--- |
-| **Move Agent (Chrono)** | `W` `A` `S` `D` / `Arrow Keys` | Tap / Swipe |
-| **Paradox Loop (Rewind)** | `Spacebar` | ⏳ Button |
-| **Rotate Optical Piece** | Right-Click / `R` Key | Tap placed piece |
-| **Undo Move** | `Z` / `Ctrl + Z` | ↶ Button |
-| **Restart Level** | `R` Key | 🔄 Button |
-| **Tactical Intel / Hints** | `H` Key | 💡 Button |
-| **Toggle Audio** | `M` Key | 🔊 Button |
-| **Sector Map** | `Esc` Key | 🗺️ Button |
+- **💥 Cannon**: Rapid kinetic ground cannonballs targeting approaching melee troops.
+- **🏹 Archer Tower**: Elevated long-range perimeter coverage targeting ground and air.
+- **💣 Mortar**: Long-range ballistic artillery calculating true parabolic flight arcs with high-impact **Area-of-Effect (AoE) splash shockwaves**.
+- **🔮 Wizard Tower**: Arcane fireballs dealing circular splash damage to swarms.
+- **🧱 Palisade Walls**: Hard physical obstacles that funnel enemy troops and require breaching.
+
+---
+
+## 🎮 How to Play
+
+### 1. Village Management
+- **Collect Resources**: Click on glowing Gold Mines (`💰`) or Elixir Collectors (`🧪`) to collect accumulated wealth.
+- **Shop / Build**: Open the **Shop** (`🛠️`) to place new defenses, resource buildings, or palisade walls.
+- **Train Army**: Open **Train Army** (`⚔️`) to queue Barbarians, Archers, Giants, Goblins, Wall Breakers, and Wizards.
+
+### 2. Campaign Raids & AI Combat
+1. Click **ATTACK!** (`💥`) to scout an enemy goblin fortress.
+2. Select a troop type from your bottom deployment deck.
+3. Tap or click on any green grass tile **outside the red exclusion boundary** to deploy your units.
+4. Watch your troops' behavioral AI navigate with A* pathfinding and attack enemy defenses!
+5. Earn 1 to 3 stars based on destruction percentage and Town Hall elimination, and steal enemy Gold & Elixir back to your village!
 
 ---
 
 ## 🚀 Quick Start & Local Play
 
-Because SYNAPSE is engineered using pure modern standards (HTML5 Canvas, ES6 Modules, Modern CSS with Glassmorphism, and the Web Audio API), **no build step or package manager is required**:
+```bash
+# Clone the repository
+git clone https://github.com/azhaktheara-blip/gaming.git
+cd game
 
-1. Clone or download the repository:
-   ```bash
-   git clone https://github.com/<your-username>/<repo-name>.git
-   cd game
-   ```
-2. Open `index.html` directly in any modern web browser:
-   - Or run a local HTTP server:
-     ```bash
-     npx serve .
-     # or
-     python -m http.server 8000
-     ```
-3. Navigate to `http://localhost:8000`.
+# Run automated test suite
+npm test
 
----
-
-## 🛠️ Tech Architecture
-
-- **Rendering**: Canvas 2D engine with device-pixel-ratio scaling, glowing laser raycaster, and particle collision dynamics.
-- **Audio Engine**: 100% procedural Web Audio synthesizer (zero external mp3/wav files).
-- **UI System**: Semantic HTML with native `<dialog closedby="any">` modal controls and responsive glassmorphic HUD.
-- **Persistence**: `localStorage` state management for star ratings, move efficiency, best times, and daily streaks.
-- **CI/CD**: GitHub Actions workflow (`.github/workflows/deploy.yml`) for instantaneous 1-click GitHub Pages deployment.
+# Play locally
+python -m http.server 8000
+# or open index.html directly in any browser
+```
 
 ---
 

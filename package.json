@@ -1,20 +1,21 @@
 {
-  "name": "synapse-matrix-game",
+  "name": "realm-clash-strategy-game",
   "version": "1.0.0",
-  "description": "A mind-bending quantum logic, time-loop paradox, and boolean puzzle game.",
+  "description": "A 2D strategic base builder and real-time tactical AI combat game inspired by Clash of Clans.",
   "type": "module",
   "scripts": {
-    "test": "node tests/engine.test.mjs",
+    "test": "node tests/clash.test.mjs",
     "start": "npx serve ."
   },
   "keywords": [
     "game",
-    "puzzle",
-    "quantum-optics",
-    "time-loop",
-    "boolean-logic",
-    "canvas",
-    "brain-game"
+    "strategy",
+    "clash-of-clans",
+    "ai",
+    "pathfinding",
+    "tower-defense",
+    "isometric",
+    "canvas"
   ],
   "author": "Krai Theara",
   "license": "MIT"
